@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,6 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import { authRequest } from "@/lib/api/auth-api";
 import { AuthLoginType } from "@/types/auth-type";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const LoginSchema = z.object({
   user_name: z.string().min(2, {
@@ -29,6 +31,7 @@ const LoginSchema = z.object({
 const Login = () => {
   const navigate = useRouter();
   const { AUTH_LOGIN } = authRequest();
+
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -48,44 +51,67 @@ const Login = () => {
   });
 
   const onSubmit = (data: z.infer<typeof LoginSchema>) => {
-    console.log(data, "===data login");
     mutate(data);
   };
+
   return (
-    <div className="mx-auto w-full max-w-md shadow-lg rounded-2xl p-4 mt-12">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="user_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="username" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input type="password" placeholder="password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Submitting" : "Submit"}
-          </Button>
-        </form>
-      </Form>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
+        <h1 className="text-3xl font-bold text-center text-blue-800 mb-2">
+          Welcome Back
+        </h1>
+        <p className="text-center text-blue-500 mb-6">Login to your account</p>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <FormField
+              control={form.control}
+              name="user_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your username" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter your password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" disabled={isPending} className="w-full">
+              {isPending ? "Logging in..." : "Login"}
+            </Button>
+          </form>
+        </Form>
+
+        <p className="text-center text-sm text-gray-500 mt-6">
+          Don't have an account?{" "}
+          <Link
+            href="/register"
+            className="text-blue-600 hover:underline font-medium"
+          >
+            Register here
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
