@@ -1,74 +1,110 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useQuery } from "@tanstack/react-query";
-import { userRequest } from "@/lib/api/user-api";
-import { User, Mail } from "lucide-react";
-import { CardItem } from "@/types/card-type";
-import CorporateCard from "@/components/profile-card/cororate-card";
 
-export default function Home() {
-  const { PROFILE } = userRequest();
-  const { data: me, isLoading } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => PROFILE(),
-  });
-  if (isLoading) {
-    return "loading...";
-  }
+import {
+  Mail,
+  Phone,
+  MessageCircle,
+  Video,
+  Facebook,
+  Instagram,
+  Pencil,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button"; // Assuming you're using shadcn/ui or similar
 
+export default function BusinessContactCard() {
   return (
-    <div className="min-h-screen">
-      <div className="p-4 items-center justify-center">
-        {/* Header  */}
-        <div className="w-full max-w-md mx-auto overflow-hidden shadow-lg border-0 rounded-t-2xl">
-          <div className="h-32 bg-gradient-to-r from-blue-500 to-pink-500 relative rounded-t-2xl">
-            <div className="absolute inset-0 bg-black/10"></div>
-          </div>
-          <div className="relative px-6 pb-6">
-            {/* Avatar  */}
-            <div className="flex justify-center -mt-14 mb-4">
-              <div className="relative">
-                <Avatar className="w-24 h-24 border-4 border-white shadow-lg">
-                  <AvatarImage src={me?.data?.avatar} alt="@evilrabbit" />
-                  <AvatarFallback>{me?.data?.full_name}</AvatarFallback>
-                </Avatar>
-              </div>
-            </div>
+    <div className="max-w-sm mx-auto p-6 bg-white rounded-3xl shadow-xl mt-10">
+      {/* Profile Photo */}
+      <div className="flex justify-center mb-4">
+        <Image
+          src="/avatar.jpg" // replace with dynamic avatar src
+          alt="Profile Photo"
+          width={100}
+          height={100}
+          className="rounded-full border-2 border-gray-300"
+        />
+      </div>
 
-            {/* user info  */}
-            <div className="text-center space-y-4">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                  {me?.data?.full_name}
-                </h1>
-              </div>
-              <div className="flex items-center justify-center gap-2 text-gray-600">
-                <User className="h-4 w-4" />@{me?.data?.user_name}
-              </div>
-              <div className="flex items-center justify-center gap-2 text-gray-600">
-                <Mail className="h-4 w-4" />@{me?.data?.email}
-              </div>
-            </div>
-          </div>
+      {/* Name and Title */}
+      <div className="text-center space-y-1 mb-6">
+        <h1 className="text-2xl font-semibold text-gray-900">John Smith</h1>
+        <p className="text-sm text-gray-600">Sr. Software Developer</p>
+        <p className="text-sm text-gray-500">Teamwork.com</p>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="grid grid-cols-4 gap-2 mb-6 text-center text-sm">
+        <div className="flex flex-col items-center text-blue-600">
+          <MessageCircle className="w-6 h-6" />
+          <span>Message</span>
         </div>
-        <div className="w-full max-w-md mx-auto p-4">
-          <div className="grid grid-cols-1 gap-4">
-            {me?.data?.idCard?.map((card: CardItem, idx: number) => {
-              return (
-                <div key={idx}>
-                  {card.card_type === "Corporate" && (
-                    <div>
-                      <CorporateCard me={me} card={card} idx={idx} />
-                    </div>
-                  )}
-                  {card.card_type === "Modern" && <div>test</div>}
-                  {card.card_type === "Minimal" && <div>test</div>}
-                </div>
-              );
-            })}
-          </div>
+        <div className="flex flex-col items-center text-green-600">
+          <Phone className="w-6 h-6" />
+          <span>Call</span>
+        </div>
+        <div className="flex flex-col items-center text-purple-600">
+          <Video className="w-6 h-6" />
+          <span>Video</span>
+        </div>
+        <div className="flex flex-col items-center text-red-600">
+          <Mail className="w-6 h-6" />
+          <span>Mail</span>
         </div>
       </div>
+
+      {/* Contact Info */}
+      <div className="space-y-3 text-sm text-gray-800 mb-6">
+        <div>
+          <p className="text-gray-500">Call me</p>
+          <a href="tel:+012345678" className="text-blue-600 hover:underline">
+            +01 1234 5678
+          </a>
+        </div>
+
+        <div>
+          <p className="text-gray-500">Enquiry on</p>
+          <a
+            href="mailto:john.smith@teamwork.com"
+            className="text-blue-600 hover:underline"
+          >
+            john.smith@teamwork.com
+          </a>
+        </div>
+
+        <div>
+          <p className="text-gray-500">Facebook</p>
+          <Link
+            href="https://www.facebook.com/teamwork/"
+            className="text-blue-600 hover:underline"
+            target="_blank"
+          >
+            https://www.facebook.com/teamwork/
+          </Link>
+        </div>
+
+        <div>
+          <p className="text-gray-500">Instagram</p>
+          <Link
+            href="https://www.instagram.com/teamwork/"
+            className="text-blue-600 hover:underline"
+            target="_blank"
+          >
+            https://www.instagram.com/teamwork/
+          </Link>
+        </div>
+      </div>
+
+      {/* Edit Profile Button */}
+      <Button
+        className="w-full"
+        variant="default"
+        onClick={() => console.log("Go to edit profile")}
+      >
+        <Pencil className="mr-2 h-4 w-4" />
+        Edit Profile
+      </Button>
     </div>
   );
 }
