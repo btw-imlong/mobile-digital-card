@@ -35,7 +35,7 @@ const CorporateCard = ({
 
         <div key={idx}>
           <Card className="bg-gradient-to-br from-purple-800/90 to-pink-800/90 border-0 shadow-2xl backdrop-blur-sm">
-            <Link href={`/update-card/${card.id}`}>
+            <Link href={`/edit-card/${card._id}`}>
               <Button
                 size="sm"
                 variant="outline"

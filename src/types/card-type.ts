@@ -13,6 +13,8 @@ export interface SocialLink {
 export type CardType = "Minimal" | "Modern" | "Corporate";
 export type GenderType = "male" | "female";
 export interface CardItem {
+  team: string;
+  code: string;
   user: IUser;
   id: string;
   gender: GenderType;
