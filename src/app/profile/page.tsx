@@ -1,82 +1,108 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useQuery } from "@tanstack/react-query";
-import { userRequest } from "@/lib/api/user-api";
-import { User, Mail } from "lucide-react";
-import { CardItem } from "@/types/card-type";
-import CorporateCard from "@/components/profile-card/cororate-card";
+import React from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { fetchUserProfile } from "@/lib/api/user-api";
+import { createUserCard } from "@/lib/api/card-api";
+import { IUser } from "@/types/user-type";
 
-export default function Home() {
-  const { PROFILE } = userRequest();
-  const { data: me, isLoading } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => PROFILE(),
+export default function ProfilePage() {
+  const {
+    data: user,
+    isLoading,
+    isError,
+  } = useQuery<IUser>({
+    queryKey: ["user-profile"],
+    queryFn: fetchUserProfile,
   });
 
-  if (isLoading) {
-    return (
-      <p className="text-center mt-12 text-gray-600">Loading profile...</p>
-    );
-  }
+  const {
+    mutate: handleCreateCard,
+    isPending,
+    isSuccess,
+    isError: isCreateError,
+  } = useMutation({
+    mutationFn: createUserCard,
+    onSuccess: () => {
+      alert("Card created successfully!");
+    },
+    onError: () => {
+      alert("Failed to create card.");
+    },
+  });
+
+  if (isLoading) return <p className="text-center mt-8">Loading...</p>;
+  if (isError || !user)
+    return <p className="text-center mt-8 text-red-500">User not found.</p>;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Profile Header */}
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
-          <div className="h-36 bg-gradient-to-r from-indigo-600 to-blue-500 relative">
-            <div className="absolute inset-0 bg-black/10" />
+    <div className="min-h-screen w-full">
+      {/* Header */}
+      <div className="bg-gradient-to-b from-blue-500 to-blue-700 p-6 text-white text-center relative">
+        <div className="absolute top-4 right-4">
+          <button className="bg-white text-blue-600 px-4 py-1 rounded-lg font-semibold shadow hover:bg-gray-100">
+            Logout
+          </button>
+        </div>
+        <div className="flex flex-col items-center mt-6">
+          <div className="relative w-28 h-28">
+            <img
+              src={user.avatar || "/default-avatar.png"}
+              alt="Avatar"
+              className="w-full h-full rounded-full border-4 border-white shadow"
+            />
           </div>
+          <h1 className="mt-4 text-2xl font-bold">{user.full_name}</h1>
+          <p className="text-sm">{user.job_title}</p>
+        </div>
+      </div>
 
-          <div className="relative px-6 pb-6">
-            {/* Avatar */}
-            <div className="flex justify-center -mt-16">
-              <Avatar className="w-28 h-28 border-4 border-white shadow-lg">
-                <AvatarImage src={me?.data?.avatar} alt={me?.data?.full_name} />
-                <AvatarFallback>{me?.data?.full_name}</AvatarFallback>
-              </Avatar>
-            </div>
-
-            {/* Info */}
-            <div className="mt-4 text-center space-y-2">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                {me?.data?.full_name}
-              </h2>
-
-              <div className="flex justify-center gap-2 text-sm text-gray-500">
-                <User className="w-4 h-4" />
-                <span>Username: {me?.data?.user_name}</span>
-              </div>
-
-              <div className="flex justify-center gap-2 text-sm text-gray-500">
-                <Mail className="w-4 h-4" />
-                <span>Email: {me?.data?.email}</span>
-              </div>
-            </div>
+      {/* Profile Info */}
+      <div className="max-w-xl mx-auto mt-8 bg-white shadow-lg rounded-lg p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Profile Information</h2>
+          <button className="bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700">
+            Edit Profile
+          </button>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <p className="text-sm text-gray-500 font-medium">Full Name</p>
+            <p className="text-gray-900">{user.full_name}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 font-medium">Username</p>
+            <p className="text-gray-900">{user.user_name}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 font-medium">Email</p>
+            <p className="text-gray-900">{user.email}</p>
           </div>
         </div>
+      </div>
 
-        {/* Cards Section */}
-        <div className="mt-8 space-y-6">
-          {me?.data?.idCard?.map((card: CardItem, idx: number) => (
-            <div key={idx}>
-              {card.card_type === "Corporate" && (
-                <CorporateCard me={me} card={card} idx={idx} />
-              )}
-              {card.card_type === "Modern" && (
-                <div className="p-4 bg-white rounded-xl shadow-sm border text-gray-700">
-                  <p>Modern card coming soon...</p>
-                </div>
-              )}
-              {card.card_type === "Minimal" && (
-                <div className="p-4 bg-white rounded-xl shadow-sm border text-gray-700">
-                  <p>Minimal card coming soon...</p>
-                </div>
-              )}
-            </div>
-          ))}
+      {/* Create Card */}
+      <div className="max-w-xl mx-auto m-8 py-2 bg-white shadow-lg rounded-lg p-6 text-center">
+        <div className="flex justify-center mb-4">
+          <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl">
+            +
+          </div>
         </div>
+        <h3 className="text-lg font-semibold mb-2">
+          Create Your Digital ID Card
+        </h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Generate a secure digital ID card with your verified information.
+        </p>
+        <button
+          disabled={isPending}
+          className={`${
+            isPending ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+          } text-white px-6 py-2 rounded-md`}
+          onClick={() => handleCreateCard()}
+        >
+          {isPending ? "Creating..." : "Create Card"}
+        </button>
       </div>
     </div>
   );

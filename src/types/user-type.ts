@@ -1,9 +1,17 @@
 import { CardItem } from "./card-type";
 
+// export interface IUser {
+//   message: string;
+//   data: UserData;
+// }
 export interface IUser {
-  message: string;
-  data: UserData;
+  full_name: string;
+  user_name: string;
+  email: string;
+  job_title: string;
+  avatar: string;
 }
+
 export interface UserData {
   id: string;
   full_name?: string | undefined;
