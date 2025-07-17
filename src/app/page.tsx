@@ -1,8 +1,7 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { userRequest } from "@/lib/api/user-api";
-import { deleteCard } from "@/lib/api/card-api"; // import deleteCard function
 import { User, Mail } from "lucide-react";
 import { CardItem } from "@/types/card-type";
 import CorporateCard from "../components/profile-card/cororate-card";
@@ -11,25 +10,16 @@ import ModernCard from "@/components/profile-card/modern-card";
 import Minimal from "@/components/profile-card/minimal";
 
 export default function Home() {
-  const queryClient = useQueryClient();
-
   const { PROFILE } = userRequest();
   const { data: me, isLoading } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => PROFILE(),
   });
 
-  // Mutation for deleting card
-  const { mutate: handleDelete, isLoading: isDeleting } = useMutation({
-    mutationFn: (cardId: string) => deleteCard(cardId),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["profile"]);
-    },
-  });
-
   if (isLoading) {
-    return <>loading...</>;
+    return "loading...";
   }
+  console.log("me", me);
 
   return (
     <>
@@ -78,10 +68,7 @@ export default function Home() {
           <div className="w-full max-w-md mx-auto p-4">
             <div className="grid grid-cols-1 gap-4">
               {me?.data?.idCard?.map((card: CardItem, idx: number) => (
-                <div
-                  key={card._id ?? idx}
-                  className="relative border rounded p-4"
-                >
+                <div key={idx}>
                   {card.card_type === "Corporate" && (
                     <CorporateCard me={me} card={card} idx={idx} />
                   )}
@@ -91,23 +78,6 @@ export default function Home() {
                   {card.card_type === "Minimal" && (
                     <Minimal me={me} card={card} idx={idx} />
                   )}
-
-                  {/* Delete Button */}
-                  <button
-                    onClick={() => {
-                      if (
-                        window.confirm(
-                          "Are you sure you want to delete this card?"
-                        )
-                      ) {
-                        handleDelete(card._id);
-                      }
-                    }}
-                    disabled={isDeleting}
-                    className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition"
-                  >
-                    {isDeleting ? "Deleting..." : "Delete"}
-                  </button>
                 </div>
               ))}
             </div>

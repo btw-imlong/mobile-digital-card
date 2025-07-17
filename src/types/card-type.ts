@@ -35,4 +35,8 @@ export interface CardItem {
   bio: string;
   web_site: string;
   company: string;
+  isLoading?: boolean;
+  _id: string; // Legacy support, can be removed later
+  idx: number; // For rendering purposes, can be removed later
+  card: CardItem; // For rendering purposes, can be removed later
 }

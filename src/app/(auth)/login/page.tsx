@@ -45,7 +45,7 @@ const Login = () => {
     mutationFn: (payload: AuthLoginType) => AUTH_LOGIN(payload),
     onSuccess: (data) => {
       if (data) {
-        navigate.push("/profile");
+        navigate.push("/");
       }
     },
   });
