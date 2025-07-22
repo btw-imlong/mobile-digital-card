@@ -45,7 +45,7 @@ const Login = () => {
     mutationFn: (payload: AuthLoginType) => AUTH_LOGIN(payload),
     onSuccess: (data) => {
       if (data) {
-        navigate.push("/profile");
+        navigate.push("/");
       }
     },
   });
@@ -103,7 +103,7 @@ const Login = () => {
         </Form>
 
         <p className="text-center text-sm text-gray-500 mt-6">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link
             href="/register"
             className="text-blue-600 hover:underline font-medium"

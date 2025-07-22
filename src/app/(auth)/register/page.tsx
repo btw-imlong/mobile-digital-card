@@ -55,7 +55,7 @@ const Register = () => {
     mutationFn: (payload: AuthRegisterType) => AUTH_REGISTER(payload),
     onSuccess: (data) => {
       console.log("Registered successfully", data);
-      router.push("/profile"); // Redirect to profile after successful registration
+      router.push("/"); // Redirect to profile after successful registration
     },
     onError: (error) => {
       console.error("Registration failed", error);
