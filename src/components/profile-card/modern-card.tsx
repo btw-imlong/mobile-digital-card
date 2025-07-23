@@ -4,6 +4,17 @@ import { IUser } from "@/types/user-type";
 import { CardItem } from "@/types/card-type";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
+interface ModernCardProps {
+  me: IUser;
+  card: CardItem;
+  idx: number;
+}
+
+const ModernCard = ({ me, card, idx }: ModernCardProps) => {
+  // optionally use idx here
+  return <ModernCardFront me={me} card={card} />;
+};
+
 const ModernCardFront = ({ me, card }: { me: IUser; card: CardItem }) => {
   return (
     <div className="w-[350px] h-[520px] rounded-2xl overflow-hidden shadow-xl text-white relative">
