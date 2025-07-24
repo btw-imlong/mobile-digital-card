@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -31,7 +30,6 @@ const LoginSchema = z.object({
 const Login = () => {
   const navigate = useRouter();
   const { AUTH_LOGIN } = authRequest();
-
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -51,9 +49,9 @@ const Login = () => {
   });
 
   const onSubmit = (data: z.infer<typeof LoginSchema>) => {
+    console.log(data, "===data login");
     mutate(data);
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">

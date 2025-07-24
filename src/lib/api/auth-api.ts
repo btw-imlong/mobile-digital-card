@@ -10,21 +10,12 @@ export const authRequest = () => {
     });
   };
 
-  // const AUTH_LOGIN = async (payload: AuthLoginType) => {
-  //   return await axios({
-  //     url: "/auth/login",
-  //     method: "POST",
-  //     data: payload,
-  //   });
-  // };
-  const AUTH_LOGIN = async (data: AuthLoginType) => {
-    const response = await axios({
-      method: "POST",
+  const AUTH_LOGIN = async (payload: AuthLoginType) => {
+    return await axios({
       url: "/auth/login",
-      data,
+      method: "POST",
+      data: payload,
     });
-
-    return response.data; // { token, user }
   };
 
   return {
