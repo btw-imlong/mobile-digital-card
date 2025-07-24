@@ -1,75 +1,210 @@
 "use client";
+
 import React from "react";
-
-import { IUser } from "@/types/user-type";
-import { CardItem } from "@/types/card-type";
-
+import { Button } from "../ui/button";
+import { Download, Globe, Mail, MapPin, Pencil, Phone } from "lucide-react";
+import { Card, CardContent } from "../ui/card";
+import { CardItem, IUser } from "@/types/user-type";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import Link from "next/link";
+import { QRCodeCanvas } from "qrcode.react";
 
-const Minimal = ({ me, card }: { me: IUser; card: CardItem; idx: number }) => {
+const MinimalCard = ({
+  me,
+  card,
+  idx,
+}: {
+  me: IUser;
+  card: CardItem;
+  idx: number;
+}) => {
+  const baseUrl = "http://192.168.12.61:3000"; // fixed IP for phone scanning
+
   return (
-    <div className="max-w-sm mx-auto bg-white rounded-xl overflow-hidden shadow-xl border border-gray-200">
-      {/* Header with logo and QR */}
-      <div className="flex justify-between items-center px-4 pt-4">
-        {/* Replace this with your real logo */}
-        <p className="text-lg font-bold text-[#444]">YourLogo</p>
-        <div className="w-12 h-12 bg-gray-100 rounded p-1">
-          {/* Replace with <Image /> if using real QR */}
-          <div className="w-full h-full bg-gray-300 rounded" />
-        </div>
-      </div>
+    <div className="max-w-md mx-auto p-6 bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl shadow-lg">
+      <Card className="bg-white rounded-xl shadow-md border border-amber-300 relative">
+        <Link href={`/update-card/${card.id}`}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-3 right-3 text-amber-600 hover:text-amber-800 transition"
+            aria-label="Edit Card"
+          >
+            <Pencil className="w-5 h-5" />
+          </Button>
+        </Link>
 
-      {/* Avatar with wings-style background */}
-      <div className="flex flex-col items-center mt-4 relative">
-        <div className="relative z-10">
-          <Avatar className="w-24 h-24 border-[5px] border-white shadow-md">
-            <AvatarImage src={me?.data.avatar} alt="avatar" />
-            <AvatarFallback className="bg-pink-400 text-white text-xl">
-              {me?.data.user_name?.[0]}
-            </AvatarFallback>
-          </Avatar>
-        </div>
-        <div className="absolute top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0">
-          <div className="w-40 h-8 bg-pink-500 rounded-full blur-sm opacity-70" />
-        </div>
-      </div>
+        <CardContent className="p-6">
+          {/* Header */}
+          <div className="flex flex-col items-center border-b border-amber-300 pb-6 mb-6">
+            <div className="relative w-24 h-24 mb-4 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 flex items-center justify-center shadow-lg border-4 border-amber-500">
+              <Avatar className="w-24 h-24 rounded-full border-4 border-white shadow-md">
+                <AvatarImage src={me?.data?.avatar} alt={me?.data?.user_name} />
+                <AvatarFallback className="text-3xl font-semibold bg-gradient-to-br from-blue-600 to-purple-700 text-white">
+                  {me?.data?.user_name}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+            <h1 className="text-3xl font-serif font-bold text-amber-900 tracking-wide">
+              {me.data.full_name}
+            </h1>
+            <div className="mt-2 inline-block bg-amber-600 text-white text-xs font-semibold px-5 py-1 rounded-full uppercase tracking-wider shadow-md">
+              {card.job}
+            </div>
+            <p className="mt-1 text-amber-700 font-serif text-sm">
+              {card.company}
+            </p>
+          </div>
 
-      {/* Name and title */}
-      <div className="text-center mt-2">
-        <h1 className="text-lg font-bold text-gray-800">
-          {me?.data.full_name}
-        </h1>
-        <p className="text-sm text-gray-500">{card.job}</p>
-      </div>
+          {/* Bio */}
+          <div className="text-center mb-8">
+            <p className="text-amber-800 text-base italic font-serif leading-relaxed max-w-prose mx-auto">
+              {card.bio}
+            </p>
+          </div>
 
-      {/* Information row */}
-      <div className="mt-4 px-6 text-sm text-gray-700 space-y-2 font-medium">
-        <div className="flex justify-between">
-          <span className="text-gray-500">CODE:</span>
-          <span>{card.code || "N/A"}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-gray-500">TEAM:</span>
-          <span>{card.team || "Creative Team"}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-gray-500">PHONE:</span>
-          <span>{card.phone}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-gray-500">DOB:</span>
-          <span>{card.dob || "01/01/2019"}</span>
-        </div>
-      </div>
+          {/* Contact Info */}
+          <div className="space-y-4 mb-8">
+            {[
+              {
+                icon: <Phone className="w-5 h-5 text-amber-600" />,
+                label: "Telephone",
+                value: card.phone,
+              },
+              {
+                icon: <Mail className="w-5 h-5 text-amber-600" />,
+                label: "Electronic Mail",
+                value: me?.data.email,
+              },
+              {
+                icon: <Globe className="w-5 h-5 text-amber-600" />,
+                label: "Website",
+                value: card.web_site,
+              },
+              {
+                icon: <MapPin className="w-5 h-5 text-amber-600" />,
+                label: "Address",
+                value: card.address,
+              },
+            ].map(({ icon, label, value }, i) => (
+              <div
+                key={i}
+                className="flex justify-between items-center bg-amber-50 rounded-lg px-4 py-2 shadow-sm border border-amber-200"
+              >
+                <div className="flex items-center gap-3 text-amber-900 font-semibold text-sm">
+                  {icon}
+                  <span>{label}</span>
+                </div>
+                <span className="text-amber-700 text-sm font-mono break-words max-w-[60%] text-right">
+                  {value || "-"}
+                </span>
+              </div>
+            ))}
+          </div>
 
-      {/* Bottom section (footer info) */}
-      <div className="mt-4 bg-pink-500 text-white text-xs text-center px-4 py-3 space-y-1">
-        <p className="font-semibold">{card.web_site?.toUpperCase()}</p>
-        <p>{card.address}</p>
-        <p>{card.phone}</p>
-      </div>
+          {/* Actions */}
+          <div className="space-y-5">
+            <Button
+              onClick={async () => {
+                const toBase64 = async (url: string) => {
+                  const response = await fetch(url);
+                  const blob = await response.blob();
+                  return new Promise<string>((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () =>
+                      resolve(reader.result?.toString().split(",")[1] || "");
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                  });
+                };
+
+                const avatarBase64 = me?.data.avatar
+                  ? await toBase64(me?.data.avatar)
+                  : "";
+
+                const vcard = [
+                  "BEGIN:VCARD",
+                  "VERSION:3.0",
+                  `FN:${me?.data.full_name}`,
+                  `N:${me?.data.full_name};;;;`,
+                  `ORG:${card.company}`,
+                  `TITLE:${card.job}`,
+                  `TEL;TYPE=WORK,VOICE:${card.phone}`,
+                  `EMAIL;TYPE=PREF,INTERNET:${me?.data.email}`,
+                  avatarBase64
+                    ? `PHOTO;ENCODING=b;TYPE=JPEG:${avatarBase64}`
+                    : "",
+                  `URL:${card.web_site}`,
+                  `ADR;TYPE=WORK:;;${card.address};;;;`,
+                  `NOTE:${card.bio}`,
+                  "END:VCARD",
+                ]
+                  .filter(Boolean)
+                  .join("\r\n");
+
+                const blob = new Blob([vcard], {
+                  type: "text/vcard;charset=utf-8",
+                });
+
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `${(
+                  me?.data.full_name ?? "Unnamed_User"
+                ).replace(" ", "_")}_${idx + 1}.vcf`;
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+              }}
+              className="w-full bg-amber-600 hover:bg-amber-700 text-white font-serif font-semibold shadow-lg"
+            >
+              <Download className="w-5 h-5 mr-2" />
+              Add to Address Book
+            </Button>
+
+            {/* Social Links */}
+            <div className="grid gap-6">
+              {card.socialLinks.map((res, idx: number) => (
+                <div
+                  key={idx}
+                  className="bg-white rounded-lg border border-amber-300 p-4 shadow-md"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full flex items-center gap-3 border-amber-600 text-amber-700 hover:bg-amber-50 font-serif font-medium"
+                  >
+                    <Avatar className="w-7 h-7 rounded-full">
+                      <AvatarImage src={res.icon} alt={res.platform} />
+                      <AvatarFallback className="text-xl font-semibold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                        {res.platform}
+                      </AvatarFallback>
+                    </Avatar>
+                    {res.platform}
+                  </Button>
+                </div>
+              ))}
+            </div>
+
+            {/* QR Code - only once here */}
+            <div className="mt-6 flex flex-col items-center p-4 bg-amber-600 rounded-lg shadow-lg max-w-xs mx-auto">
+              <p className="text-white font-semibold mb-3 text-lg">
+                Scan My Card
+              </p>
+              <QRCodeCanvas
+                value={`${baseUrl}/${me?.data.user_name}`}
+                size={130}
+                bgColor="transparent"
+                fgColor="#fff"
+                className="rounded-lg"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
-export default Minimal;
+export default MinimalCard;

@@ -1,4 +1,9 @@
+"use client";
+import { CardItem, IUser } from "@/types/user-type";
 import React from "react";
+import { Card, CardContent } from "../ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { QRCodeCanvas } from "qrcode.react";
 
 import {
   Badge,
@@ -10,13 +15,8 @@ import {
   MapPin,
   Phone,
 } from "lucide-react";
-
-import Link from "next/link";
 import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { CardItem } from "@/types/card-type";
-import { IUser } from "@/types/user-type";
+import Link from "next/link";
 
 const CorporateCard = ({
   me,
@@ -27,6 +27,7 @@ const CorporateCard = ({
   card: CardItem;
   idx: number;
 }) => {
+  const baseUrl = "http://192.168.12.61:3000";
   return (
     <div>
       {/* <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900 p-4"> */}
@@ -35,7 +36,7 @@ const CorporateCard = ({
 
         <div key={idx}>
           <Card className="bg-gradient-to-br from-purple-800/90 to-pink-800/90 border-0 shadow-2xl backdrop-blur-sm">
-            <Link href={`/edit-card/${card._id}`}>
+            <Link href={`/update-card/${card.id}`}>
               <Button
                 size="sm"
                 variant="outline"
@@ -200,6 +201,17 @@ const CorporateCard = ({
                       <Github className="w-3 h-3 mr-1" />
                       GitHub
                     </Button>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mt-4 border border-white/20 flex flex-col items-center space-y-2 col-span-2">
+                      <p className="text-white text-sm font-semibold mb-2">
+                        Scan My Card
+                      </p>
+                      <QRCodeCanvas
+                        value={`${baseUrl}/${me?.data.user_name}`}
+                        size={130}
+                        bgColor="transparent"
+                        fgColor="#ffffff"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

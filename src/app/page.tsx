@@ -2,7 +2,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userRequest } from "@/lib/api/user-api";
-import { deleteCard } from "@/lib/api/card-api"; // import deleteCard function
+
 import { User, Mail } from "lucide-react";
 import { CardItem } from "@/types/card-type";
 import CorporateCard from "../components/profile-card/cororate-card";
@@ -20,12 +20,6 @@ export default function Home() {
   });
 
   // Mutation for deleting card
-  const { mutate: handleDelete, isLoading: isDeleting } = useMutation({
-    mutationFn: (cardId: string) => deleteCard(cardId),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["profile"]);
-    },
-  });
 
   if (isLoading) {
     return <>loading...</>;
@@ -93,21 +87,6 @@ export default function Home() {
                   )}
 
                   {/* Delete Button */}
-                  <button
-                    onClick={() => {
-                      if (
-                        window.confirm(
-                          "Are you sure you want to delete this card?"
-                        )
-                      ) {
-                        handleDelete(card._id);
-                      }
-                    }}
-                    disabled={isDeleting}
-                    className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition"
-                  >
-                    {isDeleting ? "Deleting..." : "Delete"}
-                  </button>
                 </div>
               ))}
             </div>
